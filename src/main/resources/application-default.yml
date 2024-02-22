@@ -1,0 +1,200 @@
+info:
+app:
+  name: '@project.name@'
+  description: '@project.description@'
+  version: '@project.version@'
+
+server:
+  tomcat:
+    relaxed-path-chars: [ '[',']' ]
+    relaxed-query-chars: [ '[',']' ]
+  max-http-header-size: 40KB
+  shutdown: "immediate"
+  port: 8080
+  servlet:
+    contextPath: /
+  parallelism: 200
+
+okhttp-configuracao-geral:
+  connect-timeout-millis: 7000
+  read-timeout-millis: 7000
+  write-timeout-millis: 7000
+  retryOnConnectionFailure: true
+
+okhttp-connection-pool:
+  max-idle-connections: 20
+  keep-alive-duration-segundos: 60
+
+feign:
+  httpclient:
+    enabled: false
+    max-connections: 200
+    max-connections-per-route: 50
+    connection-timer-repeat: 3000
+    ok-http:
+      read-timeout: 60
+  client:
+    config:
+      default:
+
+        connectTimeout: 7000
+        readTimeout: 7000
+  okhttp:
+    enabled: true
+  compression:
+    request:
+      min-request-size: 4096
+
+external-endpoints:
+  livrariaService:
+    name: livrariaService
+    enabled: true
+    url: http://localhost:1080
+    get:
+      path: /mock-livraria/
+    connectionTimeout: 3000
+    readTimeout: 8000
+
+  livrariaFallback:
+    name: livraria-fallback
+    url: http://localhost:1081
+    get:
+      path: /mock-livraria-fallback
+
+user:
+  timezone: America/Sao_Paulo
+
+spring:
+  cache:
+    type: redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    time-to-live: 600000 #ms == 10min
+    timeout: 60000 #ms == 1min
+    password: null
+    ssl: false
+    max-redirects: 3
+    cluster:
+      timeout: 5
+      nodes: [ localhost:6379 ]
+      #nodes[0]: 127.0.0.1:6379
+      #nodes[2]: 127.0.0.1:6380
+  lifecycle:
+    timeout-per-shutdown-phase: "2s"
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+    default-property-inclusion: NON_NULL
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: CONSOLE
+  banner:
+    location: banner.txt
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  cloud:
+    discovery:
+      client:
+        composite-indicator:
+          enabled: false
+    httpclientfactories:
+      apache:
+        enabled: false
+      ok:
+        enabled: true
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      base-path: /
+    exposure:
+      include: health
+  endpoint:
+    health:
+      enabled: true
+      group:
+        liveness:
+          include: livenessState, ping
+        readiness:
+          include: livenessState, readinessState, redis #, servicosDependentes
+      show-details: "ALWAYS"
+      probes:
+        enabled: true
+  health:
+    ping:
+      enabled: true
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+    servicosDependentes:
+      enabled: false
+    redis:
+      enabled: true
+    circuitbreakers:
+      enabled: true
+
+messages:
+  exception: 'classpath:/messages/global'
+
+logging:
+  level:
+    root: INFO
+    br:
+      com:
+        bradesco: INFO
+    okhttp3: OFF
+    org:
+      springframework: INFO
+bradesco.enge.logcloud:
+  audit.log:
+    auto: true
+    level: INFO
+    console.enabled: false
+    file:
+      enabled: true
+      filename: audit
+      folder: logs
+      archivedFolder: archived
+      maxSize: 10MB
+      maxHistory: 10
+  srvcanal.log:
+    auto: true
+    level: INFO
+    console.enabled: true
+    file:
+      enabled: true
+      filename: srvcanal
+      folder: logs
+      archivedFolder: archived
+      maxSize: 10MB
+      maxHistory: 10
+
+resilience4j.circuitbreaker:
+  instances:
+    srvKitSpringboot:
+      registerHealthIndicator: true
+      slidingWindowSize: 20
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 10
+      waitDurationInOpenState: 30s
+      permittedNumberOfCallsInHalfOpenState: 10
+      failureRateThreshold: 50
+      maxWaitDurationInHalfOpenState: 30s
+
+
+health-check-endpoint-custom:
+  endpoints: http://localhost:1080/mock-livraria
+
+springdoc:
+  pathsToMatch: /**
+  swagger-ui:
+    enabled: true
+    tagsSorter: alpha
+
+certificados:
+  path:
+    certificado1: mocks/certificado/certificado.pem

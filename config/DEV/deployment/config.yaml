@@ -1,0 +1,141 @@
+---
+app:
+  # Nome do repositório
+  name: srv-kit-springboot
+  # Centro de custo. Equivalente as quatro primeiras letras do name
+  centro_custo: leap
+  # Valuestream. Equivalente a chave do projeto.
+  value_stream: leap
+# Cluster em que o deploy será implantado.
+clusters:
+  # Macro domínio do cluster: https://confluence.bradesco.com.br:8443/x/uCmyEg
+  - name: sandbox
+  # Habilite essa configuração em caso de deploy em múltiplos clusters
+  #- name: prepiloto
+  # Caso você queira aplicar uma configuração diferente apenas nesse cluster
+  # é possível fazer isso em overrides
+  #  overrides:
+  #    namespace: devops
+  #    hpa:
+  #      min_replicas: 1
+  #      max_replicas: 2
+deploy:
+  # https://confluence.bradesco.com.br:8443/pages/viewpage.action?pageId=347612734
+  spec:
+    replicas: 1
+  # Nome do ambiente. Deve ser DEV, HOM ou PRD para o respectivo ambiente
+  environment: DEV
+  # Namespace de dentro do cluster
+  namespace: LEAP
+  base_url_istio: http://ingress.internal.global.ti.teste.intranet:8443
+
+  # Criação de route para load tests em HOM para https://confluence.bradesco.com.br:8443/x/kgCmG
+  loadtest_enabled_for_hom: false
+
+  # Valores de uso de recursos
+  resources:
+    request_memory: "500M"
+    request_cpu: "250m"
+    limit_memory: "1024M"
+    limit_cpu: "500m"
+  # Configurações de rollout
+  rollingUpdate:
+    # Quantos pods podem subir ao mesmo tempo
+    maxSurge: 0
+    # Número máximo de pods que podem estar indisponíveis
+    maxUnavailable: 1
+  # Configurações de configmap
+  configmap:
+    SPRING_PROFILES_ACTIVE: DEV
+    JAVA_OPTS: -Xms768m -Xmx768m
+    SERVER_PORT: 8443
+    FEIGN_HTTPCLIENT_MAX_CONNECTIONS: 800
+    FEIGN_HTTPCLIENT_MAX_CONNECTIONS_PER_ROUTE: 400
+    FEIGN_HTTPCLIENT_CONNECTION_TIME_REQUEST: 3000
+    FEIGN_HTTPCLIENT_OKHTTP_DEFAULT_READ_TIMEOUT: 60
+    FEIGN_HTTPCLIENT_CONFIG_DEFAULT_CONNECT_TIMEOUT: 7000
+    FEIGN_HTTPCLIENT_CONFIG_DEFAULT_READ_TIMEOUT: 7000
+    SERVER_PARALELISM: 200
+    ENV_HTTPCLIENT_CONFIG_DEFAULT_CONNECT_TIMEOUT: 500
+    ENV_HTTPCLIENT_CONFIG_DEFAULT_READ_TIMEOUT: 1000
+    ENV_HTTPCLIENT_CONFIG_DEFAULT_WRITE_TIMEOUT: 500
+    ENV_HTTPCLIENT_CONFIG_DEFAULT_RETRY: "true"
+    ENV_OKHTTPCLIENT_POOL_MAX_IDLE_CONNECTIONS: 20
+    ENV_OKHTTPCLIENT_POOL_KEEP_ALIVE_DURATION_SEGUNDOS: 20
+    LOG_LEVEL_ROOT: "INFO"
+    LOG_LEVEL_BR_COM_BRADESCO: "INFO"
+    LOG_LEVEL_OKHTTP3: "OFF"
+    LOG_LEVEL_ORG_SPRINGFRAMEWORK: "INFO"
+    ENV_DISPOSITIVOS_CANAL_66: "003,004,005,010,025"
+    ENV_DISPOSITIVOS_CANAL_66_CREDITO: "010"
+    ENV_DISPOSITIVOS_CANAL_66_DEV: "003,010"
+    ENV_DISPOSITIVOS_CANAL_66_DEV_SENHA_DEBTO: "003"
+    ENV_DISPOSITIVOS_CANAL_66_DEV_TOKEN_FISICO: "004"
+    ENV_DISPOSITIVOS_CANAL_66_DEV_TANCODE: "005"
+    ENV_DISPOSITIVOS_CANAL_66_DEV_OTP6: "010"
+    ENV_COD_MIDIA: 66
+    ENV_COD_SERVICO: 57
+    ENV_DISPOSITIVOS_CANAL_66_DEV_OTP8: "025"
+    ENV_SRV_AUT_TIMEOUT: "5000"
+    ENV_SRV_AUT_CACHE_TIMEOUT: "300"
+    ENV_SRV_AUT_CACHE_CONNECT_TIMEOUT: "30"
+    ENV_SRV_AUT_MAX_CONNECTION_POLL: "1"
+    ENV_SRV_SPRINGBOOT: ""
+    ENV_PATH_CERTIFICADO1: /mnt/secrets-store/certificado.pem
+    #-------------------INICIO CONECTOR CWS-------------------------#
+    #----Os Valores abaixo estao em sua configuracao default, ajuste conforme necessario.----#
+    #----VERIFICAR IPS ABAIXO POR AMBIENTE, CADA CANAL DEVE USAR SUA PORTA APROPRIADA--------#
+    ENGE_CWS_SERVER: "10.193.93.48:3195"
+    ENGE_CWS_SERVER_CANAL66: "10.193.93.48:3130" # caso precise do NAT, use 192.168.240.12:3130
+    ENGE_CWS_CONNECTION_TIMEOUT: "5000"
+    ENGE_CWS_CONNECTION_MANAGER_TIMEOUT: "20000"
+    ENGE_CWS_CONNECTION_IDLE_TIMEOUT: "60000"
+    ENGE_CWS_MAX_HOST_CONNECTIONS: "20"
+    ENGE_CWS_MAX_TOTAL_CONNECTION: "20"
+    ENGE_CWS_SO_TIMEOUT: "20000"
+    ENGE_CWS_RETRY_COUNT: "3"
+    #-------------------FIM CONECTOR CWS----------------------------#
+  # Configurações de horizontal pod autoscaler
+  hpa:
+    min_replicas: 1
+    max_replicas: 2
+  # Configurações de probes
+  probes:
+    startup_path: "/health/liveness"
+    startup_probe_failure_threshold: 5
+    startup_probe_initial_delay_seconds: 60
+    startup_period: 30
+    readiness_path: "/health/readiness"
+    readiness_initial_delay: 10
+    readiness_failure_threshold: 3
+    readiness_period: 30
+    liveness_path: "/health/liveness"
+    liveness_initial_delay: 10
+    liveness_failure_threshold: 3
+    liveness_period: 20
+  # Configuração de métricas
+  metrics:
+    target_cpu_utilization_percentage: 80
+  # Habilite esse trecho caso utilize Azure Key Vault. Ele deve estar no nível do .deploy.
+  # Tenant id. Até então, só temos esse tenant id abaixo.
+  #azurekv:
+  #  tenant_id: ccd25372-eb59-436a-ad74-78a49d784cf3
+  #  key_vault:
+  #    name: kv-teste-integracao-aro
+  #    objects:
+  #      - name: minhasecret
+  #        type: secret
+  #        version: null
+  api_gateway:
+    # Deve ser "true" para fazer a publicação no Axway
+    publish_api: false
+    # Pode ser "none", "external", "dev" ou "domain", dependendo do escopo de acesso do serviço.
+    publish_api_type: external
+    # Deverá ser alinhado com o time de API Studio
+    organization: Esteira Leap
+    # Por padrão manter o valor "published"
+    state: published
+    # O path que será no Axway para interagir com o microsserviço. Deverá ser alinhado com o time de API Studio
+    frontend_api_path: "/recarga-tel"
+    # Nome de arquivo de certificado, caso seu microsserviço utilize um certificado diferente do padrão. Deixe vazio para que a esteira baixe o certificado do openshift
+    custom_certificate:

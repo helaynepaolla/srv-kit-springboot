@@ -1,0 +1,40 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/mock-livraria-fallback/",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "000",
+          "titulo": "LIVRO FALLBACK",
+          "autor": "CIRCUIT BREAKER",
+          "editora": "Resilience4j",
+          "valor": 2000,
+          "genero": "ACAO"
+        }
+      ]
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/mock-livraria-fallback/000",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "000",
+        "titulo": "LIVRO FALLBACK",
+        "autor": "CIRCUIT BREAKER",
+        "editora": "Resilience4j",
+        "valor": 2000,
+        "genero": "ACAO"
+      }
+    }
+  }
+]

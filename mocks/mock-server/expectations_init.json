@@ -1,0 +1,136 @@
+[
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/mock-livraria/",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": [
+        {
+          "id": "1",
+          "titulo": "CEM ANOS DE SOLIDÃO",
+          "autor": "GABRIEL GARCÍA MÁRQUEZ",
+          "editora": "Companhia das Letras",
+          "valor": 20,
+          "genero": "ACAO"
+        },
+        {
+          "id": "2",
+          "titulo": "CRIME E CASTIGO",
+          "autor": "FIÓDOR DOSTOYEVSKI",
+          "editora": "editora Rocco",
+          "valor": 10,
+          "genero": "ACAO"
+        },
+        {
+          "id": "3",
+          "titulo": "ORGULHO E PRECONCEITO",
+          "autor": "JANE AUSTEN",
+          "editora": "editora Arqueiro",
+          "valor": 15,
+          "genero": "ACAO"
+        }
+      ]
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/mock-livraria/",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 201,
+      "body": {}
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/mock-livraria/1",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "1",
+        "titulo": "CEM ANOS DE SOLIDÃO",
+        "autor": "GABRIEL GARCÍA MÁRQUEZ",
+        "editora": "Companhia das Letras",
+        "valor": 20,
+        "genero": "ACAO"
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "DELETE",
+      "path": "/mock-livraria/1",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 202,
+      "body": {}
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/mock-livraria/2",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "2",
+        "titulo": "CRIME E CASTIGO",
+        "autor": "FIÓDOR DOSTOYEVSKI",
+        "editora": "editora Rocco",
+        "valor": 10,
+        "genero": "ACAO"
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "DELETE",
+      "path": "/mock-livraria/2",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 202,
+      "body": {}
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "GET",
+      "path": "/mock-livraria/3",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "body": {
+        "id": "3",
+        "titulo": "ORGULHO E PRECONCEITO",
+        "autor": "JANE AUSTEN",
+        "editora": "editora Arqueiro",
+        "valor": 15,
+        "genero": "ACAO"
+      }
+    }
+  },
+  {
+    "httpRequest": {
+      "method": "DELETE",
+      "path": "/mock-livraria/3",
+      "secure": false
+    },
+    "httpResponse": {
+      "statusCode": 202,
+      "body": {}
+    }
+  }
+]

@@ -1,0 +1,41 @@
+version: '3.5'
+services:
+  # DOCUMENTATION: https://hub.docker.com/r/bitnami/redis-cluster/
+  redis-single-node-cluster:
+    #Exemplo de Redis em CLUSTER com 1 node master
+    image: bitnami/redis-cluster
+    environment:
+      - 'ALLOW_EMPTY_PASSWORD=yes'
+      - 'REDIS_CLUSTER_REPLICAS=0' #aumente aqui o numero de nodes master
+      - 'REDIS_NODES=localhost localhost localhost'
+      - 'REDIS_CLUSTER_CREATOR=yes' #cria e inicializa os nodes dentro do container
+      - 'REDIS_CLUSTER_DYNAMIC_IPS=no'
+      - 'REDIS_CLUSTER_ANNOUNCE_IP=127.0.0.1'
+      - 'REDIS_PORT_NUMBER=6379'
+      - 'REDIS_IO_THREADS=1'
+    ports:
+      - '6379:6379'
+
+  mockServer:
+    image: mockserver/mockserver:latest
+    ports:
+      - 1080:1080
+    environment:
+      MOCKSERVER_MAX_EXPECTATIONS: 100
+      MOCKSERVER_MAX_HEADER_SIZE: 8192
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /api-mock/expectations_init.json
+      MOCKSERVER_WATCH_INITIALIZATION_JSON: 'true'
+    volumes:
+      - ./mocks/mock-server:/api-mock
+
+  mockServerFallback:
+    image: mockserver/mockserver:latest
+    ports:
+      - 1081:1080
+    environment:
+      MOCKSERVER_MAX_EXPECTATIONS: 100
+      MOCKSERVER_MAX_HEADER_SIZE: 8192
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /api-mock/expectations_init_fallback.json
+      MOCKSERVER_WATCH_INITIALIZATION_JSON: 'true'
+    volumes:
+      - ./mocks/mock-server:/api-mock

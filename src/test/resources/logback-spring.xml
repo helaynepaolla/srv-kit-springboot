@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!--<encoder class="br.com.bradesco.enge.logcloud.logback.JsonPatternEncoder" /> USAR ESSE ENCODER SE QUISER TODOS DADOS EM JSON -->
+        <encoder>
+            <pattern>
+                <![CDATA[%date{HH:mm:ss.SSS} [%thread] %-5level %logger{15}#%line %X{req.requestURI} traceId: %X{trace_id} spanId: %X{span_id} %msg\n]]></pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender da biblioteca -->
+    <appender name="WRAPPER" class="br.com.bradesco.enge.logcloud.logback.LoggingEventWrapperAppender">
+        <appender-ref ref="STDOUT"/>
+    </appender>
+
+    <logger name="br.com.bradesco" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <logger name="org.springframework" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <!-- Logar informacoes sobre OKHTTP, principalmente pool de conexões -->
+    <!-- RECOMENDAVEL logar apenas localmente para testes de carga OU quando houver necessidade em algum ambiente -->
+    <logger name="okhttp3" level="OFF" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="WRAPPER"/>
+    </root>
+
+</configuration>

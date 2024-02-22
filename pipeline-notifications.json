@@ -1,0 +1,22 @@
+{
+  "users": [
+    "eokada@ciandt.com",
+    "thiago.r.ferreira@bradesco.com.br",
+    "levi.souza@bradesco.com.br",
+    "daniel.soriano@bradesco.com.br",
+    "anderson.dorigao@bradesco.com.br",
+    "murilo.o.lima@bradesco.com.br",
+    "frederico.pereira@bradesco.com.br",
+    "rodrigo.s.mori@bradesco.com.br",
+    "rodrigo.de.carvalho@bradesco.com.br",
+    "leandro.dos.santos@bradesco.com.br",
+    "willian.yamashita@bradesco.com.br"
+  ],
+  "groups": [
+    {
+      "nome": "Pipeline - Kits e Templates TI Híbrida e Leap",
+      "team_url": "https://teams.microsoft.com/l/team/19%3abTcHYHv-vSJxq7WwmQAjMc5vy6dvCkxdgErMZ4bLtdY1%40thread.tacv2/conversations?groupId=bad195c3-75ec-4b75-ab1e-bd69fc6b127b&tenantId=ccd25372-eb59-436a-ad74-78a49d784cf3",
+      "channel_url": "https://teams.microsoft.com/l/channel/19%3a514aeccd833d41d7bbde0b88ca6ea712%40thread.tacv2/Pipeline?groupId=bad195c3-75ec-4b75-ab1e-bd69fc6b127b&tenantId=ccd25372-eb59-436a-ad74-78a49d784cf3"
+    }
+  ]
+}

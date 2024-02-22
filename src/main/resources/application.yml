@@ -1,0 +1,301 @@
+# Estas configuracoes sempre serao carregdas primeiro, independentemente do profile escolhido
+# Eh possivel sobreescrever configuracao(oes) utilizando outros arquivos application-<profile>.yml
+
+# INICIO - CORE PROPERTIES
+# https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#core-properties
+info:
+  app:
+    name: '@project.name@'
+    description: '@project.description@'
+    version: '@project.version@'
+
+# INICIO - SERVER PROPERTIES
+# https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.server
+server:
+  tomcat:
+    relaxed-path-chars: [ '[',']' ]
+    relaxed-query-chars: [ '[',']' ]
+  max-http-header-size: 40KB
+  shutdown: "graceful"
+  port: ${SERVER_PORT}
+  servlet:
+    contextPath: /
+  parallelism: ${SERVER_PARALELISM}
+# FIM - SERVER PROPERTIES
+
+# INICIO - Configuracao okhttpclient
+okhttp-configuracao-geral:
+  #https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/-builder/connect-timeout/
+  connect-timeout-millis: ${ENV_HTTPCLIENT_CONFIG_DEFAULT_CONNECT_TIMEOUT}
+  #https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/-builder/read-timeout/
+  read-timeout-millis: ${ENV_HTTPCLIENT_CONFIG_DEFAULT_READ_TIMEOUT}
+  #https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/-builder/write-timeout/
+  write-timeout-millis: ${ENV_HTTPCLIENT_CONFIG_DEFAULT_WRITE_TIMEOUT}
+  #https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/-builder/retry-on-connection-failure/
+  retryOnConnectionFailure: ${ENV_HTTPCLIENT_CONFIG_DEFAULT_RETRY}
+# FIM - Configuracao okhttpclient
+
+# INICIO - Configuracao ConnectionPool okhttpclient
+# https://square.github.io/okhttp/3.x/okhttp/okhttp3/ConnectionPool.html
+okhttp-connection-pool:
+  #Default maxIdleConnections default 5
+  max-idle-connections: ${ENV_OKHTTPCLIENT_POOL_MAX_IDLE_CONNECTIONS}
+  #Default keepAliveTime - default 60seg
+  keep-alive-duration-segundos: ${ENV_OKHTTPCLIENT_POOL_KEEP_ALIVE_DURATION_SEGUNDOS}
+# FIM - Configuracao ConnectionPool okhttpclient
+
+# INICIO - Spring Cloud - Open Feign
+# https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/appendix.html
+
+# Configs de timeout padrão. Estão definidas dentro do arquivo .env do ambiente em externalfiles
+# Esta configuração será aplicada a todos os clientes que não tenham config de timeout
+# Importante entender a diferença entre connectTimeout e readTimeout
+# Para maiores informaçôes consultar o tópico de Confiabilidade no Checklist de Microserviços de SRE:
+# https://confluence.bradesco.com.br:8443/pages/viewpage.action?pageId=207620242#id-3.Checklistboaspr%C3%A1ticasmicroservices-5-TimeoutePooldeConex%C3%B5es-Conex%C3%B5esHTTP,JDBC,CWS,FilaeEventStream
+feign:
+  httpclient:
+    enabled: false
+    #Default Feign - feign.httpclient.max-connections: 200
+    max-connections: ${FEIGN_HTTPCLIENT_MAX_CONNECTIONS}
+    #Default Feign - feign.httpclient.max-connections-per-route: 50
+    max-connections-per-route: ${FEIGN_HTTPCLIENT_MAX_CONNECTIONS_PER_ROUTE}
+    #Default Feign - feign.httpclient.connection-timer-repeat: 3000
+    connection-timer-repeat: ${FEIGN_HTTPCLIENT_CONNECTION_TIME_REQUEST}
+    ok-http:
+      #Default Feign - feign.httpclient.ok-http.read-timeout: 60seg
+      read-timeout: ${FEIGN_HTTPCLIENT_OKHTTP_DEFAULT_READ_TIMEOUT}
+  client:
+    config:
+      default:
+        # Configs de timeout padrão. Estão definidas dentro do arquivo .env do ambiente em externalfiles
+        # Esta configuração será aplicada a todos os clientes que não tenham config de timeout
+        # Importante entender a diferença entre connectTimeout e readTimeout
+
+        # Para maiores informaçôes consultar o tópico de Confiabilidade no Checklist de Microserviços de SRE:
+        # https://confluence.bradesco.com.br:8443/pages/viewpage.action?pageId=207620242#id-3.Checklistboaspr%C3%A1ticasmicroservices-5-TimeoutePooldeConex%C3%B5es-Conex%C3%B5esHTTP,JDBC,CWS,FilaeEventStream
+        connectTimeout: ${FEIGN_HTTPCLIENT_CONFIG_DEFAULT_CONNECT_TIMEOUT}
+        readTimeout: ${FEIGN_HTTPCLIENT_CONFIG_DEFAULT_READ_TIMEOUT}
+  okhttp:
+    enabled: true
+  compression:
+    request:
+      min-request-size: 4096
+# FIM - Spring Cloud - Open Feign
+
+
+# INICIO - Mapeamento Feign de funcionalidades POR AMBIENTE
+external-endpoints:
+  livrariaService:
+    name: livrariaService
+    enabled: true
+    url: ${ENV_SRV_KIT_SPRINGBOOT}
+    get:
+      path: /mock-livraria/
+    connectionTimeout: 3000
+    readTimeout: 8000
+
+  livrariaFallback:
+    name: livraria-fallback
+    url: ${ENV_LIVRARIA_FALLBACK}
+    get:
+      path: /mock-livraria-fallback/
+    connectionTimeout: 3000
+    readTimeout: 8000
+# FIM - Mapeamento Feign de funcionalidades POR AMBIENTE
+
+user:
+  timezone: ${TZ}
+
+spring:
+  #Inicio de configs Cache-REDIS
+  #Define Tipo de Cache
+  cache:
+    type: redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    time-to-live: 600000 #ms == 10min
+    timeout: 60000 #ms == 1min
+    password: null
+    ssl: false
+    max-redirects: 3
+    cluster:
+      timeout: 5
+      nodes: [ localhost:6379 ]
+      #nodes[0]: 127.0.0.1:6379
+      #nodes[2]: 127.0.0.1:6380
+    #adicionar configs do cluster
+  lifecycle:
+    timeout-per-shutdown-phase: "45s"
+  jackson:
+    serialization:
+      # Conversao de data do ObjectMapper
+      WRITE_DATES_AS_TIMESTAMPS: false
+    # Nao serializar objetos nulos
+    default-property-inclusion: NON_NULL
+  # Desabilitar banner do Spring durante o startup
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: "off"
+  banner:
+    location: banner.txt
+  # INICIO - WEB PROPERTIES
+  # https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.web
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  cloud:
+    discovery:
+      client:
+        composite-indicator:
+          #Desabilitando health discovery composite
+          #https://cloud.spring.io/spring-cloud-commons/multi/multi__spring_cloud_commons_common_abstractions.html#_health_indicator
+          enabled: false
+    httpclientfactories:
+      apache:
+        enabled: false
+      ok:
+        enabled: true
+  # FIM - WEB PROPERTIES
+
+# INICIO - ACTUATOR PROPERTIES
+# https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html#appendix.application-properties.actuator
+management:
+  endpoints:
+    # DESABILITA TODOS OS ENDPOINTS DO ACTUATOR
+    enabled-by-default: false
+    web:
+      # ALTERANDO O PATH DO ACTUATOR DE /actuator/<endpoint-actuator> PARA /<endpoint-actuator>
+      base-path: /
+    exposure:
+      # HABILITA APENAS O ENDPOINT HEALTH
+      include: health
+  endpoint:
+    # HABILITA APENAS O ENDPOINT ‘/health’
+    health:
+      enabled: true
+      #Especifica os itens adicionais à serem monitorados pelo readiness
+      #https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#actuator.endpoints.kubernetes-probes.external-state
+      group:
+        liveness:
+          include: livenessstate, ping
+        readiness:
+          #CUIDADO: a escolha de realizar verificações externas deve ser realizada com muito cuidado e pode causar efeitos colaterais
+          include: readinessstate, redis #, servicosDependentes
+
+      # HABILITA PARA RETORNAR O CAMPO 'DETAILS' AO REQUISITAR /health
+      # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints.health
+      show-details: "NEVER"
+
+      # HABILITA PROBES - LIVENESS CHECK e READINESS CHECK
+      # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+      probes:
+        enabled: true
+
+  health:
+    # é equivalente ao helloworld, já que ele usa do proprio springmvc para verificar se o framework está funcionando
+    ping:
+      enabled: true
+    # DESABILITA PARA NAO RETORNAR INFORMACOES DO ATRIBUTO 'diskpace' AO REQUISITAR /health
+    # https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.endpoints.health.auto-configured-health-indicators
+    diskspace:
+      enabled: false
+
+    # HABILITA LIVENESS CHECK PARA O KUBERNETES
+    # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    livenessState:
+      enabled: true
+
+    # HABILITA READNESS CHECK PARA O KUBERNETES
+    # https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+    readinessState:
+      enabled: true
+    servicosDependentes:
+      enabled: true
+    redis:
+      enabled: true
+    # Habilitado no caso de haver implementação de circuit breaker no framework
+    # Caso não haja implementação, remover este bloco do actuator ou desabilitá-lo
+    circuitbreakers:
+      enabled: true
+# FIM - ACTUATOR PROPERTIES
+
+messages:
+  exception: 'classpath:/messages/global'
+
+#INICIO - Configuracao level log
+# Visa facilitar a alteracao do nível do log de forma facilitada para apoiar em troubleshooting
+# Quando houver necessidade de outros logs de packages, criar tais mapeamentos
+# Valores permitidos para LEVEL (TRACE, DEBUG, INFO, WARN, ERROR, ALL ou OFF)
+# Permite também alterar opção JVM. Exemplo: -Dlogging.level.root=INFO
+# Permite também sobreescrever outro arquivo. Exemplo: mapear chaves com outros valores no application-DEV.yml
+logging:
+  level:
+    root: ${LOG_LEVEL_ROOT}
+    br:
+      com:
+        bradesco: ${LOG_LEVEL_BR_COM_BRADESCO}
+    okhttp3: ${LOG_LEVEL_OKHTTP3}
+    org:
+      springframework: ${LOG_LEVEL_ORG_SPRINGFRAMEWORK}
+# biblioteca de logs do bradesco, documentacao no confluence: https://confluence.bradesco.com.br:8443/pages/viewpage.action?pageId=290426770
+bradesco.enge.logcloud:
+  audit.log:
+    auto: true
+    level: ${LOG_LEVEL_BR_COM_BRADESCO}
+    console.enabled: false
+    file:
+      enabled: true
+      filename: audit
+      folder: logs
+      archivedFolder: archived
+      maxSize: 10MB
+      maxHistory: 10
+  srvcanal.log:
+    auto: true
+    level: ${LOG_LEVEL_BR_COM_BRADESCO}
+    console.enabled: true
+    file:
+      enabled: true
+      filename: srvcanal
+      folder: logs
+      archivedFolder: archived
+      maxSize: 10MB
+      maxHistory: 10
+#FIM - Configuracao level log
+
+# Bloco de configuração dos parâmetros de Circuit breaker do resilience4j
+# Para detalhamento de cada parâmetro, checar a documentação do resilience4j: https://resilience4j.readme.io/docs/circuitbreaker
+# Caso não haja implementação, remover este bloco.
+
+resilience4j.circuitbreaker:
+  instances:
+    srvKitSpringboot:
+      registerHealthIndicator: true
+      slidingWindowSize: 20
+      slidingWindowType: COUNT_BASED
+      minimumNumberOfCalls: 10
+      waitDurationInOpenState: 30s
+      permittedNumberOfCallsInHalfOpenState: 10
+      failureRateThreshold: 50
+      maxWaitDurationInHalfOpenState: 30s
+
+# INICIO - Mapeamento HealthCkeck custom utilizado para verificar a saude de servicos dependentes que retornam UP/DOWN
+# Recomendacao: mapear chave da URL do serviço no arquivo ConfigMap e consumindo uma chave da URL do arquivo aro.env
+# Se desejar, pode sobreescrever as chaves no arquivo yml do profile desejado, exemplo: application-LOCAL.yml
+# Caso nao tenha nenhum servico a ser verificado o checkpoint, apenas deixe a chave 'health-check-endpoint-custom'
+
+health-check-endpoint-custom:
+  endpoints: ${ENV_SERVICO_DEPENDENTE}
+
+springdoc:
+  pathsToMatch: /**
+  swagger-ui:
+    enabled: true
+    tagsSorter: alpha
+    # path: /swagger-ui/api-docs.html
+
+# FIM - Mapeamento HealthCkeck custom utilizado para verificar a saude de servicos dependentes que retornam UP/DOWN
+certificados:
+  path:
+    certificado1: ${ENV_PATH_CERTIFICADO1}

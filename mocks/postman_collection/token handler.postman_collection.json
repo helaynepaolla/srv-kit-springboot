@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "1f39defe-4089-48ec-9af1-cc090771578d",
+		"name": "token handler",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1175222"
+	},
+	"item": [
+		{
+			"name": "/v1/sessoes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const headers = (pm.response.headers + '').split('\\n')\r",
+							"let sessionId = headers[0].split(':')[1].split('=')[1].split(';')[0];\r",
+							"let csrfToken = headers[1].split(':')[1].split('=')[1].split(';')[0];\r",
+							"let idConta = pm.response.json().contas[0].id;\r",
+							"\r",
+							"pm.environment.set('idConta', encodeURIComponent(idConta));\r",
+							"pm.environment.set('mapeador-oauth-sessao-assinada', encodeURIComponent(sessionId));\r",
+							"pm.environment.set('mapeador-oauth-csrf-assinado', csrfToken);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "*/*"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"assertion_token\": \"eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiUlNBLU9BRVAtMjU2In0.SFHFTcXI5QDqJz8nsD8--uO84gVOkmNEFVCZnn5By1SfRn7coc8wy_Bzv_xj-D2kNuSpIIfNSdpAWsCd9GxvmmuY2bcUH8D1hnN2yeBHYh2ftpQ_GmxIFi2vtHse5gqaXGBScArr87qAkjbiXeHECjNxMaJILHlQOtCp6Ogd_mDltFiDNCwOtdjZfx-h95rz7yUTTAEQ2dDpsYoH8qrJhE9Ew_dD8zQyEwtOTCDBBdT94AV1uBxNnFjHP2v_g4ZHg8sAHkC3DnPtXwKnnLKc1H7z6sLQBjD7xPQdJCCzhBzf_I7p4C5SKBbBcVJT_Dcm4tZQUs9fD6YCDYhUlCeFQQ.v5yChzaUPKcX8anQilPcAw.QMoQ-G3OJnwCk3ifDqPRyLAtyq8yWYXwoEpknSnoutezrwdmHIWG-63hekJfKKxxgethL-pL1TNrMC4BX5E8FnDEd_H2c5FDZDKQs1Ey4RXiMduAfl3xQSrKDyUM3aUjEbygM9Yq-JahmwZ3KXFfg-PDY3cH6MY6YVZC8rGnGaD1JZwTFy_cBtyw7wZ1-9WekPKCfbU2inP7YoEW91pQCPhUsesYJvpxKjQEOatX0VwSQGYHcFAX7LzKM777OYqvWjg5v9E8KDPleHg9cZEBNVeJe2ePvVaNidqfEwRyg--rCuBfuQesRXrYZCr_DZJdihMtSUzmAoSrmb-7GOcaQM9HwXHiBcF0liynvNiLMnCMk2gk38IPLQFHXWYjXRCh-VJVklXkT4nk_CeRpCVCJ0P2u3CAPfwRy1e9DJZ2YG-VdKgbpGEmoLPKyFWjlRrfqE8MeAwbkFDeo_HarbYis4ZLENfiBIyeaT5Al3RJFwnP41u-oNY16fwEP6xzsd40Y_pDbA3hcQ4cobg15vNyEoyT4Y-dvF4ioTd4tQQuwMeJ84iIwZGW2a1uazbwabtH9CzIdmFfASIoP8U0e945WDyjxr3WXrq-tio7CYB7CrR2x88nvOqBq1dQHNRf9BTWHolbu8WSQ-6bTJ19PJEAz0p0lku3piseG2O4NvxGwc-2wKVlFdv_Fy93Zgnx0LFtw2-hdDXwE9HDeteNj9soRdKxjioHxjhpgLiwPlkZETYa_1QMVRoiMWg18z0wA347DIUrLFly-SLK8nq8rGmIsGamI1rEO2_vdPqw7w6u6X6Rh0L-qoHTsZcxQkcyOnsRp02FgbOIj5FE_qmADlLQV86XRt9EHI3WovacVunXi69jmWoyozx2lhaxG1l1at0Z0cvZrU6W9O33ZIx_XE8ApT14F7j4KVb1k4UsV4v7s2SMgW-nL6zrHe_yNdvwVkSGrctBcKwdsnHgfK948QbGmuaXCfxkH2sVTeYL3HjZ7VGfFuwEjxAZ-r6BvNSxIc_jMZdGqlm17mKroj-SanI3jy3wX7X0bI81TMVL5U4XstDyGO7-YidjmlRx-CJBhBcBpPVSBblAeyDoOniGo7c77N6pYfY5uygo7TuTKg54bvJwFQFBIEYOmdcNqRTC7cVk0noST1-jbjD18WAAvciKmkM4vj0H1gytFvtko9V3oQRLntDGXyodti75xWBbbDQ-6rk2uJ5fnrk7764AKFT5qHOczNA7qRwAQIUMpDg4rrjpfgXHwq5Lm-iZ6xPUvdKP8G0jOBKYaWV5VRzcBLaT-0pyKTy7J2z3UDy7EaP5MUX8FrtFXxknZsLIBXYqK9NRP65S0DvaxGhWs_J7l8h3HAOMhBocCGvJcRHtvEXVq6EjNUuvlcHHk3eNnQIfkr2S3_0mk8ljKrD9Xrd1z7uBd0uKzkyYmFvfD7ubOJ2ueNLuX4ArBWk17zfmHjoZA0PDDvDqaYtEdmk59_M9aGtSbP6bSKuPlpegFatCGI3MuZ4WUjjqVNfpz9zXp1581HP6UkHnJUKgT2iJfIEz-WpNwFmxk7Rj-x5n90e-wUEaiW9Wia_4ZXJCuu975yIFAballlYbeyi_znFSCPLtsXwkwNKhrqy2gSoUIWHYSut9HUjPWAfi9Un3dHRMMaoVy19LEtfRKdx1IoyE9fd1EpE_7AYxVsJOY1ooa8yt61odeTJJmQ8wjiM-7r8jKLzAS_loalBp34_brPv6EfxZY_ew2ybumv7FW9xxWPvy3z1qCHGimnVHOcagg6caJrBzVtfaIHS9XG6UMuzXcqRAldCrPYbky6E_KksOsKGjA7V_aupkGrH-HLIAhlE2nGYfEsAU2eaeBIzDUT8jsRib1KtYgxxmJ1Wh99SIRkn-oPL6M-yfOOxqwd2w6fvEF_LWIDIwtTzfkja8e8q5zrM1G3IAwxUW9w5gOdJDykOx2UmU9WGUSqpzIQ2FwGsUyN8OydisDwf9nFDB6lvAekLeRycSZBXYqNVaBzDTo4MsRZFSHgRJABiuAeyocyhUzElpm-yDioxt2t8G8gGkAyW1gJCiqyzYOUSanXlQwIT-_OBu68r5mAXl3Vudl5miuC_FgR3UlmkJQJmZE6hw_-8xH_4BF9OcLI608Lx3LNVMecyvoGiL67UyslUA5Aq2PUytQYEy65zKVaoo12WmQEBbXRPOt8LTF5vCuJrfjr7d_K0bMGNPEjizY3cYSySX2DUqHi0dZaCapy44TkdEVFC2hoObgplA-S5ZYxJCrGChCJc4zlw._Fu2GkCTOziBqMzKZH3jSg\",\n  \"id_maquina\": \"asdasdasd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrlAgenteOauth}}/v1/sessoes",
+					"host": [
+						"{{baseUrlAgenteOauth}}"
+					],
+					"path": [
+						"v1",
+						"sessoes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/mapeamentos",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "(Required) X-Csrf-Token",
+						"key": "X-Csrf-Token",
+						"value": "{{mapeador-oauth-csrf-assinado}}"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrlMapeador}}/v1/mapeamentos?metodo=get&recurso=/clientes/self/contas/{{idConta}}/recarga/1/sff/a/1/23234&sessao={{mapeador-oauth-sessao-assinada}}",
+					"host": [
+						"{{baseUrlMapeador}}"
+					],
+					"path": [
+						"v1",
+						"mapeamentos"
+					],
+					"query": [
+						{
+							"key": "metodo",
+							"value": "get",
+							"description": "cliente"
+						},
+						{
+							"key": "recurso",
+							"value": "/clientes/self/contas/{{idConta}}/recarga/1/sff/a/1/23234",
+							"description": "conta"
+						},
+						{
+							"key": "sessao",
+							"value": "{{mapeador-oauth-sessao-assinada}}",
+							"description": "sessao"
+						}
+					]
+				},
+				"description": "Endpoint que valida o X-Csrf-Token e a Sessao do Usuario"
+			},
+			"response": []
+		}
+	]
+}

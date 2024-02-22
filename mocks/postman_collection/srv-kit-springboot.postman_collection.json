@@ -1,0 +1,115 @@
+{
+	"info": {
+		"_postman_id": "27573942-0cd1-4a66-96bc-81b0fe474db1",
+		"name": "srv-kit-springboot",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1175222"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/srv-kit-springboot/v2/livro",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"id\": 12,\r\n        \"titulo\": \"NOVO LIVRO\",\r\n        \"autor\": \"YAMASHITA\",\r\n        \"editora\": \"Casa do Codigo\",\r\n        \"valor\": 20\r\n    },",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/srv-kit-springboot/v2/livro",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"srv-kit-springboot",
+						"v2",
+						"livro"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/srv-kit-springboot/v2/livro/12",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/srv-kit-springboot/v2/livro/12",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"srv-kit-springboot",
+						"v2",
+						"livro",
+						"12"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/srv-kit-springboot/v2/livro/12",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/srv-kit-springboot/v2/livro/12",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"srv-kit-springboot",
+						"v2",
+						"livro",
+						"12"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8087/srv-kit-springboot/v2/livros/1/10",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/srv-kit-springboot/v2/livros?page=1&page-size=20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"srv-kit-springboot",
+						"v2",
+						"livros"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "page-size",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
